@@ -1,0 +1,26 @@
+---
+ids_provider: "snort"
+
+ids_provider_list:
+  - snort
+
+ids_install_normalize_logs: True
+
+# defaults file for ansible-role-snort
+ids_install_snort_interface: eth0
+
+ids_install_snort_version: 2.9.12
+
+ids_install_snort_daq_version: 2.0.6
+
+# FIXME: This can be found dynamically via a rpm query, but there's little use
+#        since there's no yum repo and we have to install a specific version by
+#        hand anyways.
+#
+#        For good measure, this is the query:
+#
+#           rpm -q snort --queryformat='%{version}' | sed 's/\.//g'
+#
+ids_install_snort_rulesversion: 29120
+
+ids_install_snort_promiscuous_interface: False
