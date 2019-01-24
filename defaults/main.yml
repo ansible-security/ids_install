@@ -4,7 +4,7 @@ ids_provider: "snort"
 ids_provider_list:
   - snort
 
-ids_install_normalize_logs: True
+ids_install_normalize_logs: true
 
 # defaults file for ansible-role-snort
 ids_install_snort_interface: eth0
@@ -23,4 +23,4 @@ ids_install_snort_daq_version: 2.0.6
 #
 ids_install_snort_rulesversion: 29120
 
-ids_install_snort_promiscuous_interface: False
+ids_install_snort_promiscuous_interface: false
