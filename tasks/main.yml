@@ -76,6 +76,8 @@
       file:
         path: "{{item}}"
         state: touch
+        modification_time: "preserve"
+        access_time: "preserve"
       with_items:
         - /etc/snort/rules/white_list.rules
         - /etc/snort/rules/black_list.rules
@@ -86,7 +88,9 @@
         state: "directory"
 
     - name: run pulledpork
-      command: "/usr/bin/pulledpork -c /etc/pulledpork/pulledpork.conf"
+      shell: "/usr/bin/pulledpork -c /etc/pulledpork/pulledpork.conf && /usr/bin/touch /etc/pulledpork/ran_pulled_pork"
+      args:
+        creates: /etc/pulledpork/ran_pulled_pork
 
     - name: start and enable snort
       service:
