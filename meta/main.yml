@@ -2,7 +2,7 @@
 galaxy_info:
   author: Ansible Security Automation team
   description: A role to install many different Intrusion Detection Systems, these are defined as "providers" to the Role.
-  company: Red Hat
+  company: Ansible by Red Hat
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -15,9 +15,9 @@ galaxy_info:
   # - GPLv3
   # - Apache
   # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  license: GPLv3
 
-  min_ansible_version: 1.2
+  min_ansible_version: 2.7
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -34,10 +34,10 @@ galaxy_info:
   #
   # platforms is a list of platforms, and each platform has a name and a list of versions.
   #
-  # platforms:
-  # - name: Fedora
-  #   versions:
-  #   - all
+  platforms:
+    - name: RHEL
+      versions:
+        - 7
   #   - 25
   # - name: SomePlatform
   #   versions:

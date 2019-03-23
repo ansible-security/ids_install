@@ -8,7 +8,7 @@
 
 - name: ensure ids_provider is valid
   fail:
-    msg: "Provided value for 'ids_provider' is not valid, must be one of {{ids_provider_list}}"
+    msg: "Provided value for 'ids_provider' is not valid, must be one of {{ ids_provider_list }}"
   when: ids_provider not in ids_provider_list
 
 - name: install ids provider snort
@@ -19,8 +19,8 @@
     - name: install snort and dependent packages
       yum:
         name:
-          - "https://www.snort.org/downloads/snort/daq-{{ids_install_snort_daq_version}}-1.centos7.x86_64.rpm"
-          - "https://www.snort.org/downloads/snort/snort-{{ids_install_snort_version}}-1.centos7.x86_64.rpm"
+          - "https://www.snort.org/downloads/snort/daq-{{ ids_install_snort_daq_version }}-1.centos7.x86_64.rpm"
+          - "https://www.snort.org/downloads/snort/snort-{{ ids_install_snort_version }}-1.centos7.x86_64.rpm"
           - "libdnet"
           - "pulledpork"
         state: installed
@@ -62,13 +62,13 @@
 
     - name: get latest registered rules
       get_url:
-        url: "https://www.snort.org/rules/snortrules-snapshot-{{ids_install_snort_rulesversion}}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
-        dest: "/tmp/snortrules-snapshot-{{ids_install_snort_rulesversion}}.tar.gz"
+        url: "https://www.snort.org/rules/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
+        dest: "/tmp/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz"
 
     - name: unpack snort community rules
       unarchive:
         remote_src: true
-        src: "/tmp/snortrules-snapshot-{{ids_install_snort_rulesversion}}.tar.gz"
+        src: "/tmp/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz"
         dest: "/etc/snort/"
 
     # FIXME - this is kind of a hack
@@ -100,7 +100,7 @@
 
 
 - name: configure ids log normalization for provider snort
-  when: "ids_provider == 'snort' and ids_install_normalize_logs == True"
+  when: "ids_provider == 'snort' and ids_install_normalize_logs"
   block:
     - name: install barnyard copr from rmonk
       get_url:

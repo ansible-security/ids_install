@@ -41,7 +41,7 @@ specific provider.
 ### snort variables
 
 * `ids_install_provider` - Default value: `"snort"`
-* `ids_install_normalize_logs` - Default value: `True`
+* `ids_install_normalize_logs` - Default value: `true`
 * `ids_install_snort_interface` - Default value: `eth0`
 * `ids_install_snort_version` - Default value: `2.9.12`
 * `ids_install_snort_daq_version` - Default value: `2.0.6`
