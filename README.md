@@ -21,6 +21,9 @@ Role Variables
 Role variables that get put into use are IDS provider specific, they are listed
 below.
 
+`ids_install_pkgs` - List of packages to install on the system, by default this
+is left empty and the defaults will be selected for each provider.
+
 ## snort
 
 For the Snort provider you will need to set the `ids_install_provider` variable
@@ -43,13 +46,17 @@ specific provider.
 * `ids_install_provider` - Default value: `"snort"`
 * `ids_install_normalize_logs` - Default value: `true`
 * `ids_install_snort_interface` - Default value: `eth0`
-* `ids_install_snort_version` - Default value: `2.9.12`
-* `ids_install_snort_daq_version` - Default value: `2.0.6`
-* `ids_install_snort_rulesversion` - Default value: `29120`
+* `ids_install_snort_pkgs` - List of packages to install - Default value:
+  `['https://s3.amazonaws.com/linklight.securityautomation/daq-2.0.6-1.el7.x86_64.rpm', 'https://s3.amazonaws.com/linklight.securityautomation/snort-2.9.13-1.centos7.x86_64.rpm', 'libdnet', 'pulledpork']`
+* `ids_install_snort_rules` - URI to snort rules - Default value:
+  `https://s3.amazonaws.com/linklight.securityautomation/community-rules.tar.gz`
+* `ids_install_snort_registeredrule_ver` - Snort registered rules version - Default value: `"29130"`
 * `ids_install_snort_promiscuous_interface` - Default value: `False`
 * `ids_install_snort_logdir` - Default value: `"/var/log/snort"`
 * `ids_install_snort_logfile` - Default value: `"snort.log"`
-* `ids_install_snort_config_path` - Default value: `"/etc/snort/snort.conf"`
+* `ids_install_snort_logfile` - Default value: `"snort.log"`
+* `ids_install_snort_user` - Default value: `"snort"`
+* `ids_install_snort_group` - Default value: `"snort"`
 
 When `ids_install_normalize_logs` is set, the role will also install
 [barnyard2](https://github.com/firnsy/barnyard2) in service of normalizing the

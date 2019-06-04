@@ -16,14 +16,17 @@
   block:
     # FIXME - pulledpork needs EPEL, which I already have on my VM templates by
     #         default but it's install/enablement should be handled
-    - name: install snort and dependent packages
+    - name: install snort and dependent packages - user defined
       yum:
-        name:
-          - "https://www.snort.org/downloads/snort/daq-{{ ids_install_snort_daq_version }}-1.centos7.x86_64.rpm"
-          - "https://www.snort.org/downloads/snort/snort-{{ ids_install_snort_version }}-1.centos7.x86_64.rpm"
-          - "libdnet"
-          - "pulledpork"
+        name: "{{ ids_install_pkgs }}"
         state: installed
+      when: ids_install_pkgs is defined
+
+    - name: install snort and dependent packages - defaults
+      yum:
+        name: "{{ ids_install_snort_pkgs }}"
+        state: installed
+      when: ids_install_pkgs is not defined
 
     # This is to work around a packaing problem with upstream snort's rpm install
     - name: symlink libdnet.1 to libdnet.so.1
@@ -51,7 +54,7 @@
 
     - name: get latest community rules
       get_url:
-        url: "https://www.snort.org/downloads/community/community-rules.tar.gz"
+        url: "{{ ids_install_snort_rules }}"
         dest: "/tmp/community-rules.tar.gz"
 
     - name: unpack snort community rules
@@ -62,14 +65,16 @@
 
     - name: get latest registered rules
       get_url:
-        url: "https://www.snort.org/rules/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
-        dest: "/tmp/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz"
+        url: "https://www.snort.org/rules/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
+        dest: "/tmp/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz"
+      ignore_errors: true
 
     - name: unpack snort community rules
       unarchive:
         remote_src: true
-        src: "/tmp/snortrules-snapshot-{{ ids_install_snort_rulesversion }}.tar.gz"
+        src: "/tmp/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz"
         dest: "/etc/snort/"
+      ignore_errors: true
 
     # FIXME - this is kind of a hack
     - name: ensure snort required files exist
