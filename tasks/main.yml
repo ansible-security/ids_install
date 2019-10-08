@@ -14,8 +14,10 @@
 - name: install ids provider snort
   when: "ids_provider == 'snort'"
   block:
-    # FIXME - pulledpork needs EPEL, which I already have on my VM templates by
-    #         default but it's install/enablement should be handled
+    - name: import geerlingguy's epel role
+      import_role:
+        name: "geerlingguy.repo-epel"
+
     - name: install snort and dependent packages - user defined
       yum:
         name: "{{ ids_install_pkgs }}"
@@ -63,23 +65,10 @@
         src: "/tmp/community-rules.tar.gz"
         dest: "/etc/snort/"
 
-    - name: get latest registered rules
-      get_url:
-        url: "https://www.snort.org/rules/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz?oinkcode=01f5c80369e5c15d6ac49f9b284d9f4b4ddb7064"
-        dest: "/tmp/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz"
-      ignore_errors: true
-
-    - name: unpack snort community rules
-      unarchive:
-        remote_src: true
-        src: "/tmp/snortrules-snapshot-{{ ids_install_snort_registeredrule_ver }}.tar.gz"
-        dest: "/etc/snort/"
-      ignore_errors: true
-
     # FIXME - this is kind of a hack
     - name: ensure snort required files exist
       file:
-        path: "{{item}}"
+        path: "{{ item }}"
         state: touch
         modification_time: "preserve"
         access_time: "preserve"
@@ -87,22 +76,23 @@
         - /etc/snort/rules/white_list.rules
         - /etc/snort/rules/black_list.rules
 
-    - name: ensure dirs exist as needed for pulledpork
-      file:
-        path: "/etc/snort/rules/iplists/"
-        state: "directory"
+    - block:
+        - name: ensure dirs exist as needed for pulledpork
+          file:
+            path: "/etc/snort/rules/iplists/"
+            state: "directory"
 
-    - name: run pulledpork
-      shell: "/usr/bin/pulledpork -c /etc/pulledpork/pulledpork.conf && /usr/bin/touch /etc/pulledpork/ran_pulled_pork"
-      args:
-        creates: /etc/pulledpork/ran_pulled_pork
+        - name: run pulledpork
+          shell: "/usr/bin/pulledpork -c /etc/pulledpork/pulledpork.conf && /usr/bin/touch /etc/pulledpork/ran_pulled_pork"
+          args:
+            creates: /etc/pulledpork/ran_pulled_pork
+      when: ids_install_snort_use_pulledpork
 
     - name: start and enable snort
       service:
         name: snort
         state: started
         enabled: true
-
 
 - name: configure ids log normalization for provider snort
   when: "ids_provider == 'snort' and ids_install_normalize_logs"
