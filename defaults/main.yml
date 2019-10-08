@@ -26,6 +26,6 @@ ids_install_snort_pkgs:
 #
 ids_install_snort_rules: 'https://s3.amazonaws.com/linklight.securityautomation/community-rules.tar.gz'
 
-ids_install_snort_registeredrule_ver: '29130'
-
 ids_install_snort_promiscuous_interface: false
+
+ids_install_snort_use_pulledpork: false
