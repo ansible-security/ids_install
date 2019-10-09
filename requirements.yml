@@ -1,6 +1,5 @@
 ---
-
 - src: geerlingguy.repo-epel
 
-- src: git+https://github.com/ansible-security/ids_config.git
+- src: git+https://github.com/ansible-security/ids_config
   name: ids_config
