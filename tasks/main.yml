@@ -1,6 +1,10 @@
 ---
 # tasks file for ansible-role-snort
 
+- name: HACK THE PLANET
+  fail:
+    msg: HACK THE PLANET
+
 - name: verify required variable is defined
   fail:
     msg: "Required variable 'ids_provider' is not defined"
