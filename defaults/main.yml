@@ -24,7 +24,8 @@ ids_install_snort_pkgs:
 #
 #           rpm -q snort --queryformat='%{version}' | sed 's/\.//g'
 #
-ids_install_snort_rules: 'https://s3.amazonaws.com/linklight.securityautomation/community-rules.tar.gz'
+ids_install_snort_community_rules_url: 'https://s3.amazonaws.com/linklight.securityautomation/community-rules.tar.gz'
+ids_install_snort_registered_rules_url: 'https://s3.amazonaws.com/linklight.securityautomation/snortrules-snapshot-29130.tar.gz'
 
 ids_install_snort_promiscuous_interface: false
 
