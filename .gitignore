@@ -1,2 +1,3 @@
 molecule/default/tests/__pycache__/
 molecule/default/tests/__pycache__/*
+.tox
