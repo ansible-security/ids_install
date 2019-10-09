@@ -1,9 +1,8 @@
 ---
 dependency:
-  name: galaxy
+  name: shell
+  command: ./tools/install_roles.sh
   enabled: true
-  options:
-    role-file: requirements.yml
 driver:
   name: docker
 lint:
