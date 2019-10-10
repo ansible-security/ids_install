@@ -54,30 +54,21 @@
         dest: /etc/sysconfig/snort
       notify: systemctl daemon-reload
 
-    - name: get ids_install_snort_community_rules_url rules
-      get_url:
-        url: "{{ ids_install_snort_community_rules_url }}"
-        dest: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
-
-    - name: unpack ids_install_snort_community_rules_url rules
+    - name: download / unpack ids_install_snort_community_rules_url rules
       unarchive:
         remote_src: true
-        src: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
+        src: "{{ ids_install_snort_community_rules_url }}"
         dest: "/etc/snort/"
-
-    - name: get ids_install_snort_registered_rules_url rules
-      get_url:
-        url: "{{ ids_install_snort_registered_rules_url }}"
-        dest: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
+        creates: /etc/snort/community-rules
       ignore_errors: true
 
-    - name: unpack ids_install_snort_registered_rules_url rules
+    - name: download / unpack ids_install_snort_registered_rules_url rules
       unarchive:
         remote_src: true
-        src: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
+        src: "{{ ids_install_snort_registered_rules_url }}"
         dest: "/etc/snort/"
+        creates: /etc/snort/rules
       ignore_errors: true
-
 
     # FIXME - this is kind of a hack
     - name: ensure snort required files exist
