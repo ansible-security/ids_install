@@ -5,10 +5,14 @@
         - ansible-tox-linters
         - ansible-tox-molecule:
             required-projects:
-              - github.com/ansible-security/ids_config
+              - name: github.com/ansible/ansible
+                override-checkout: stable-2.9
+              - name: github.com/ansible-security/ids_config
     gate:
       jobs:
         - ansible-tox-linters
         - ansible-tox-molecule:
             required-projects:
-              - github.com/ansible-security/ids_config
+              - name: github.com/ansible/ansible
+                override-checkout: stable-2.9
+              - name: github.com/ansible-security/ids_config
