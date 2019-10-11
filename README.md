@@ -44,7 +44,7 @@ specific provider.
 ### snort variables
 
 * `ids_install_provider` - Default value: `"snort"`
-* `ids_install_normalize_logs` - Default value: `true`
+* `ids_install_snort_barnyard2_normalize_logs` - Default value: `false`
 * `ids_install_snort_interface` - Default value: `eth0`
 * `ids_install_snort_pkgs` - List of packages to install - Default value:
   `['https://s3.amazonaws.com/linklight.securityautomation/daq-2.0.6-1.el7.x86_64.rpm', 'https://s3.amazonaws.com/linklight.securityautomation/snort-2.9.13-1.centos7.x86_64.rpm', 'libdnet', 'pulledpork']`
@@ -58,7 +58,7 @@ specific provider.
 * `ids_install_snort_community_rules_url` - URL to snort rules - Default value: `https://s3.amazonaws.com/linklight.securityautomation/community-rules.tar.gz`
 * `ids_install_snort_registered_rules_url` - URL to snort registered rules -  Default value: `https://s3.amazonaws.com/linklight.securityautomation/snortrules-snapshot-29130.tar.gz`
 
-When `ids_install_normalize_logs` is set, the role will also install
+When `ids_install_snort_barnyard2_normalize_logs` is set, the role will also install
 [barnyard2](https://github.com/firnsy/barnyard2) in service of normalizing the
 snort logs.
 
@@ -76,7 +76,7 @@ Example Playbook
       hosts: idshosts
       vars:
           ids_install_provider: "snort"
-          ids_install_normalize_logs: True
+          ids_install_barnyard2_normalize_logs: True
       tasks:
         - name: import ids_install role
           import_role:
