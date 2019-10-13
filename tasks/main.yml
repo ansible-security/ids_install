@@ -30,6 +30,12 @@
         state: installed
       when: ids_install_pkgs is not defined
 
+    - name: install pulledpork when specified
+      yum:
+        name: "pulledpork"
+        state: installed
+      when: ids_install_snort_use_pulledpork
+
     # This is to work around a packaing problem with upstream snort's rpm install
     - name: symlink libdnet.1 to libdnet.so.1
       file:
@@ -54,30 +60,98 @@
         dest: /etc/sysconfig/snort
       notify: systemctl daemon-reload
 
-    - name: get ids_install_snort_community_rules_url rules
-      get_url:
-        url: "{{ ids_install_snort_community_rules_url }}"
-        dest: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
+    - name: handle ids_install_snort_community_rules_url
+      block:
+        - name: get ids_install_snort_community_rules_url rules
+          get_url:
+            url: "{{ ids_install_snort_community_rules_url }}"
+            dest: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
 
-    - name: unpack ids_install_snort_community_rules_url rules
-      unarchive:
-        remote_src: true
-        src: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
-        dest: "/etc/snort/"
+        - name: unpack ids_install_snort_community_rules_url rules
+          unarchive:
+            remote_src: true
+            src: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
+            dest: "/etc/snort/"
 
-    - name: get ids_install_snort_registered_rules_url rules
-      get_url:
-        url: "{{ ids_install_snort_registered_rules_url }}"
-        dest: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
-      ignore_errors: true
+        - name: check for /etc/snort/community-rules/ from rules
+          stat:
+            path: '/etc/snort/community-rules/'
+          register: comm_st
 
-    - name: unpack ids_install_snort_registered_rules_url rules
-      unarchive:
-        remote_src: true
-        src: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
-        dest: "/etc/snort/"
-      ignore_errors: true
+        - name: Grab the list of files in /etc/snort/community-rules/
+          find:
+            paths: '/etc/snort/community-rules/'
+            file_type: file
+          register: comm_rules_files
 
+        - name: copy /etc/snort/community-rules/ files from rules into /etc/snort/
+          copy:
+            remote_src: true
+            src: '{{ item["path"] }}'
+            dest: '/etc/snort/{{ item["path"]|basename }}'
+            force: false
+          loop: "{{ comm_rules_files['files'] }}"
+          when: (comm_st.stat.isdir is defined) and comm_st.stat.isdir
+
+        - name: check for community.rules from rules
+          stat:
+            path: '/etc/snort/community.rules'
+          register: commr_st
+
+        - name: ensure rules dir exists
+          file:
+            path: '/etc/snort/rules'
+            state: directory
+
+        - name: copy community.rules into
+          copy:
+            remote_src: true
+            src: '/etc/snort/community.rules'
+            dest: '/etc/snort/rules/community.rules'
+            force: false
+          when: (commr_st.stat.isdir is defined) and commr_st.stat.exists
+      when: >
+        (ids_install_snort_community_rules_url is defined) and
+          ids_install_snort_community_rules_url|length|int > 0
+
+    # NOTE: Order matters, snort registered rules should "win" over community
+    #       rules if/when there is ever a conflict in the content. Always copy
+    #       registered content last
+    - name: handle ids_install_snort_registered_rules_url rules
+      block:
+        - name: get ids_install_snort_registered_rules_url rules
+          get_url:
+            url: "{{ ids_install_snort_registered_rules_url }}"
+            dest: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
+
+        - name: unpack ids_install_snort_registered_rules_url rules
+          unarchive:
+            remote_src: true
+            src: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
+            dest: "/etc/snort/"
+
+        - name: check for /etc/snort/etc/ from rules
+          stat:
+            path: '/etc/snort/etc/'
+          register: st
+
+        - name: Grab the list of files in /etc/snort/etc/
+          find:
+            paths: '/etc/snort/etc/'
+            file_type: file
+          register: reg_rules_files
+
+        - name: copy /etc/snort/etc/ files from rules into /etc/snort/
+          copy:
+            remote_src: true
+            src: '{{ item["path"] }}'
+            dest: '/etc/snort/{{ item["path"]|basename }}'
+            force: false
+          loop: "{{ reg_rules_files['files'] }}"
+          when: (st.stat.isdir is defined) and st.stat.isdir
+      when: >
+        (ids_install_snort_registered_rules_url is defined) and
+          ids_install_snort_registered_rules_url|length|int > 0
 
     # FIXME - this is kind of a hack
     - name: ensure snort required files exist
@@ -109,16 +183,13 @@
         enabled: true
 
 - name: configure ids log normalization for provider snort
-  when: "ids_provider == 'snort' and ids_install_normalize_logs"
+  when: "ids_provider == 'snort' and ids_install_snort_barnyard2_normalize_logs"
   block:
-    - name: install barnyard copr from rmonk
-      get_url:
-        url: "https://copr.fedorainfracloud.org/coprs/rmonk/Snort-IDS/repo/epel-7/rmonk-Snort-IDS-epel-7.repo"
-        dest: "/etc/yum.repos.d/rmonk-Snort-IDS-epel-7.repo"
-
+    # Originally from rmonk copr
+    # https://copr.fedorainfracloud.org/coprs/rmonk/Snort-IDS/
     - name: install barnyard
       yum:
-        name: barnyard2
+        name: "https://s3.amazonaws.com/linklight.securityautomation/barnyard2-1.13-1.el7.x86_64.rpm"
         state: installed
 
     - name: copy barnyard configuration template
