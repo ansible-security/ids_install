@@ -40,7 +40,6 @@ def test_gen_map_map_conf(host):
     assert f.exists
 
 
-def test_snort_service(host):
-    s = host.service("snort")
-    assert s.is_running
-    assert s.is_enabled
+def test_systemd_unit(host):
+    f = host.file("/etc/systemd/system/snort.service")
+    assert f.exists
