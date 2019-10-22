@@ -72,6 +72,7 @@
             remote_src: true
             src: "/tmp/ansible_role_ids_snort_community-rules.tar.gz"
             dest: "/etc/snort/"
+            creates: "/etc/snort/{{ ids_install_snort_community_rules_subdir }}"
 
         - name: check for /etc/snort/community-rules/ from rules
           stat:
@@ -91,7 +92,9 @@
             dest: '/etc/snort/{{ item["path"]|basename }}'
             force: false
           loop: "{{ comm_rules_files['files'] }}"
-          when: (comm_st.stat.isdir is defined) and comm_st.stat.isdir
+          when:
+            - (comm_st.stat.isdir is defined) and comm_st.stat.isdir
+            - item != "snort.conf"
 
         - name: check for community.rules from rules
           stat:
@@ -129,6 +132,7 @@
             remote_src: true
             src: "/tmp/ansible_role_ids_snort_registered_rules.tar.gz"
             dest: "/etc/snort/"
+            creates: "/etc/snort/{{ ids_install_snort_registered_rules_subdir }}"
 
         - name: check for /etc/snort/etc/ from rules
           stat:
@@ -148,7 +152,9 @@
             dest: '/etc/snort/{{ item["path"]|basename }}'
             force: false
           loop: "{{ reg_rules_files['files'] }}"
-          when: (st.stat.isdir is defined) and st.stat.isdir
+          when:
+            - (st.stat.isdir is defined) and st.stat.isdir
+            - item != "snort.conf"
       when: >
         (ids_install_snort_registered_rules_url is defined) and
           ids_install_snort_registered_rules_url|length|int > 0
@@ -163,6 +169,7 @@
       with_items:
         - /etc/snort/rules/white_list.rules
         - /etc/snort/rules/black_list.rules
+        - /etc/snort/rules/local.rules
 
     - block:
         - name: ensure dirs exist as needed for pulledpork
@@ -175,12 +182,6 @@
           args:
             creates: /etc/pulledpork/ran_pulled_pork
       when: ids_install_snort_use_pulledpork
-
-    - name: start and enable snort
-      service:
-        name: snort
-        state: started
-        enabled: true
 
 - name: configure ids log normalization for provider snort
   when: "ids_provider == 'snort' and ids_install_snort_barnyard2_normalize_logs"

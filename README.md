@@ -82,6 +82,14 @@ Example Playbook
           import_role:
             name: "ids_install"
 
+
+Notes
+-----
+
+* This role does not start and enable the `ids_provider` service because this
+  Role does not deal with the configuration of the service and only the
+  installation.
+
 License
 -------
 
