@@ -190,7 +190,7 @@
     # https://copr.fedorainfracloud.org/coprs/rmonk/Snort-IDS/
     - name: install barnyard
       yum:
-        name: "https://s3.amazonaws.com/linklight.securityautomation/barnyard2-1.13-1.el7.x86_64.rpm"
+        name: "{{ ids_install_snort_barnyard_pkg }}"
         state: installed
 
     - name: copy barnyard configuration template
