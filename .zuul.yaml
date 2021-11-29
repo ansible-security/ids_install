@@ -3,12 +3,12 @@
     check:
       jobs:
         - ansible-tox-linters
-        - ansible-tox-molecule:
-            required-projects:
-              - github.com/ansible-security/ids_config
+        # - ansible-tox-molecule:
+        #     required-projects:
+        #       - github.com/ansible-security/ids_config
     gate:
       jobs:
         - ansible-tox-linters
-        - ansible-tox-molecule:
-            required-projects:
-              - github.com/ansible-security/ids_config
+        # - ansible-tox-molecule:
+        #     required-projects:
+        #       - github.com/ansible-security/ids_config
