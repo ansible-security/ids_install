@@ -1,3 +1,16 @@
 molecule/default/tests/__pycache__/
 molecule/default/tests/__pycache__/*
+# Unit test / coverage reports
 .tox
+.cache
+
+# Byte-compiled / optimized / DLL files
+__pycache__
+*.py[cod]
+.coverage
+.coverage.*
+
+# ide
+.vscode
+
+changelogs/.plugin-cache.yaml

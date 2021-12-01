@@ -3,3 +3,5 @@
 
 gcc-c++ [test platform:rpm]
 python3-devel [test !platform:centos-7 platform:rpm]
+libyaml-devel [test platform:rpm]
+libyaml-dev [test platform:dpkg]
