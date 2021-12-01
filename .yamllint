@@ -1,6 +1,7 @@
 extends: default
 
 rules:
+  truthy: enable
   braces:
     max-spaces-inside: 1
     level: error
